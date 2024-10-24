@@ -11,7 +11,7 @@ const Navigator = () => {
       <div className={styles.leftSection}>
         <div className={styles.logo}>Your Logo</div>
         <Link to="/" className={styles.navButton}>
-          단계
+          단계별 문제
         </Link>
       </div>
 
