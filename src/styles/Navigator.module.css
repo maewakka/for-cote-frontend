@@ -1,0 +1,56 @@
+/* src/styles/Navigator.module.css */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #282c34;
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .leftSection {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    font-size: 1.5em;
+    color: #61dafb;
+    font-weight: bold;
+    margin-right: 20px;
+  }
+  
+  .navButton {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .navButton:hover {
+    background-color: #444;
+  }
+  
+  .githubButton {
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .githubButton:hover {
+    background-color: #666;
+  }
+  
+  .githubIcon {
+    margin-right: 10px;
+  }
+  

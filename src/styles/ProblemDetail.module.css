@@ -1,0 +1,99 @@
+.problemContainer {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr auto;
+  gap: 20px;
+  padding: 20px;
+  height: calc(100% - 90px); /* 네비바를 제외한 높이 */
+}
+
+.problemDescription {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  max-height: 100%; /* 문제 설명의 최대 높이 */
+}
+
+.inputOutputBox {
+
+  background-color: #f7f7f7;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  white-space: pre-wrap; /* 줄바꿈을 유지하고, 자동으로 줄바꿈도 되도록 */
+  word-wrap: break-word; /* 긴 단어가 있으면 자동으로 줄바꿈 */
+  word-break: break-all; /* 너무 긴 단어도 잘라서 줄바꿈 */
+  overflow-wrap: break-word; /* 텍스트가 박스를 넘지 않도록 강제 줄바꿈 */
+  overflow: hidden; /* 스크롤 없이 텍스트가 줄바꿈 */
+}
+
+.inputOutputBox pre {
+  white-space: pre-wrap; /* 공백 및 줄바꿈을 유지하면서 자동 줄바꿈 허용 */
+  word-wrap: break-word; /* 긴 단어가 있으면 줄바꿈 처리 */
+  overflow-wrap: break-word; /* 텍스트가 박스 너비를 넘지 않도록 줄바꿈 */
+}
+
+.editorContainer {
+  grid-column: 2 / 3;
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.languageSelector {
+  margin-bottom: 10px;
+  text-align: right; /* 언어 선택 부분을 오른쪽 끝으로 정렬 */
+}
+
+.languageSelector select {
+  padding: 5px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.editorContainer .output {
+  height: 30%; /* 실행 결과 비율을 30%로 고정 */
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+  overflow-y: auto; /* 실행 결과에서만 스크롤 */
+}
+
+.buttonContainer {
+  grid-column: 1 / 3;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.leftButtons button, .rightButtons button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.leftButtons button:hover, .rightButtons button:hover {
+  background-color: #45a049;
+}
+
+.leftButtons {
+  display: flex;
+}
+
+.rightButtons {
+  display: flex;
+}

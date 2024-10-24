@@ -1,0 +1,61 @@
+.problemList {
+    width: 100%;
+    height: calc(100% - 60px);
+    padding: 20px;
+    max-width: 1200px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* height: calc(100vh - 100px);  */
+    overflow-y: auto; 
+  }
+  
+  .problemList h1 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .stepTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .stepTable th,
+  .stepTable td {
+    padding: 14px 10px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+  }
+  
+  .stepTable tr {
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .stepTable tr:hover {
+    background-color: #f1f3f5;
+    transform: scale(1.02);
+  }
+  
+  .stepTable th {
+    background-color: #f1f3f5;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .stepTable td {
+    color: #555;
+  }
+  
+  .stepTable tr:last-child td {
+    border-bottom: none;
+  }
+  
