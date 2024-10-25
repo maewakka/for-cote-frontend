@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import MonacoEditor from '@monaco-editor/react';
+import { useSelector } from 'react-redux';
 import styles from '../styles/ProblemDetail.module.css';
 
 const ProblemDetail = () => {
@@ -16,6 +17,8 @@ const ProblemDetail = () => {
   const [output, setOutput] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const userEmail = useSelector((state) => state.user.user?.email);
+
   useEffect(() => {
     const fetchProblemDetails = async () => {
       try {
@@ -29,23 +32,68 @@ const ProblemDetail = () => {
         setLoading(false);
       }
     };
-
     fetchProblemDetails();
   }, [problem_id]);
+
+  const initCode = async () => {
+    if (userEmail) {
+      try {
+        const response = await axios.get('/api/code', {
+          params: { email: userEmail, problem_id, language: language },
+        });
+        const savedCode = response.data || '';
+        console.log(response);
+        setLanguageCodes((prevCodes) => ({
+          ...prevCodes,
+          [language]: savedCode,
+        }));
+        setCode(savedCode);
+      } catch (error) {
+        console.error('저장된 코드를 불러오는 중 오류 발생:', error);
+      }
+    } else {
+      setCode(languageCodes[language] || '');
+    }
+  };
+
+  // 항상 실행되도록 useEffect로 initCode 호출
+  useEffect(() => {
+    initCode();
+  }, []); // 빈 배열을 사용해 컴포넌트가 처음 렌더링될 때만 실행
 
   if (loading) return <div>Loading...</div>;
   if (!problemData) {
     return <div>문제 데이터를 불러오지 못했습니다.</div>;
   }
 
-  const handleLanguageChange = (e) => {
+  const handleLanguageChange = async (e) => {
     const newLanguage = e.target.value;
+
     setLanguageCodes((prevCodes) => ({
       ...prevCodes,
       [language]: code,
     }));
-    setCode(languageCodes[newLanguage] || '');
+
     setLanguage(newLanguage);
+
+    if (userEmail) {
+      try {
+        const response = await axios.get('/api/code', {
+          params: { email: userEmail, problem_id, language: newLanguage },
+        });
+        const savedCode = response.data || '';
+        console.log(response);
+        setLanguageCodes((prevCodes) => ({
+          ...prevCodes,
+          [newLanguage]: savedCode,
+        }));
+        setCode(savedCode);
+      } catch (error) {
+        console.error('저장된 코드를 불러오는 중 오류 발생:', error);
+      }
+    } else {
+      setCode(languageCodes[newLanguage] || '');
+    }
   };
 
   const handleEditorChange = (value) => {
@@ -70,6 +118,8 @@ const ProblemDetail = () => {
           language: language.toUpperCase(),
           code,
           input: example.input,
+          problem_id,
+          email: userEmail || null,
         });
 
         const actualOutput = response.data.output.replace(/\r\n/g, '\n').trim();
@@ -103,7 +153,23 @@ const ProblemDetail = () => {
     }
   };
 
-  // 문제 제출 버튼 클릭 시 새로운 탭에서 제출 페이지 열기
+  const handleSaveCode = async () => {
+    try {
+      await axios.post('/api/save', {
+        language: language.toUpperCase(),
+        code,
+        input: null,
+        problem_id,
+        email: userEmail,
+      });
+
+      alert('코드가 저장되었습니다.');
+    } catch (error) {
+      console.error('코드 저장 중 오류 발생:', error);
+      alert('코드 저장에 실패했습니다.');
+    }
+  };
+
   const handleSubmitProblem = () => {
     window.open(`https://www.acmicpc.net/submit/${problem_id}`, '_blank');
   };
@@ -111,7 +177,7 @@ const ProblemDetail = () => {
   return (
     <div className={styles.problemContainer}>
       <div className={styles.problemDescription}>
-        <h1>{problemData.title || '제목 없음'}</h1>
+        <h1>{problemData?.title || '제목 없음'}</h1>
         <div
           className={styles.description}
           dangerouslySetInnerHTML={{ __html: problemData.description }}
@@ -203,10 +269,11 @@ const ProblemDetail = () => {
       <div className={styles.buttonContainer}>
         <div className={styles.leftButtons}>
           <button>테스트 케이스 추가</button>
-          <button>문제 질문</button>
-          <button>코드 최적화</button>
+          {/* <button>문제 질문</button>
+          <button>코드 최적화</button> */}
         </div>
         <div className={styles.rightButtons}>
+          {userEmail && <button onClick={handleSaveCode}>코드 저장</button>}
           <button onClick={handleExecuteCode}>코드 실행</button>
           <button onClick={handleSubmitProblem}>문제 제출</button>
         </div>
