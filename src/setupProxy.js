@@ -13,6 +13,17 @@ module.exports = (app) => {
     })
   );
 
+  app.use(
+    "/api4",
+    createProxyMiddleware({
+      target: "http://localhost:8081",
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api4': '', // /api로 시작하는 경로를 제거
+      },
+    })
+  );
+
   // 새로운 /api2 프록시 추가
   app.use(
     "/api2",

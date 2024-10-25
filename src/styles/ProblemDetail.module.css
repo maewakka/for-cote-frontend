@@ -16,25 +16,21 @@
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
-  max-height: 100%; /* 문제 설명의 최대 높이 */
+  max-height: calc(100vh - 150px); /* 문제 설명의 최대 높이 */
 }
 
 .inputOutputBox {
-
   background-color: #f7f7f7;
   padding: 10px;
   border-radius: 5px;
   margin-top: 10px;
-  white-space: pre-wrap; /* 줄바꿈을 유지하고, 자동으로 줄바꿈도 되도록 */
-  word-wrap: break-word; /* 긴 단어가 있으면 자동으로 줄바꿈 */
-  word-break: break-all; /* 너무 긴 단어도 잘라서 줄바꿈 */
-  overflow-wrap: break-word; /* 텍스트가 박스를 넘지 않도록 강제 줄바꿈 */
-  overflow: hidden; /* 스크롤 없이 텍스트가 줄바꿈 */
+  white-space: pre-wrap;
+  word-break: break-word; /* 긴 단어가 있으면 자동으로 줄바꿈 */
+  overflow: hidden;
 }
 
 .inputOutputBox pre {
   white-space: pre-wrap; /* 공백 및 줄바꿈을 유지하면서 자동 줄바꿈 허용 */
-  word-wrap: break-word; /* 긴 단어가 있으면 줄바꿈 처리 */
   overflow-wrap: break-word; /* 텍스트가 박스 너비를 넘지 않도록 줄바꿈 */
 }
 
@@ -75,9 +71,13 @@
   padding: 10px 0;
 }
 
+.leftButtons, .rightButtons {
+  display: flex;
+  gap: 10px; /* 버튼 간격을 gap으로 설정 */
+}
+
 .leftButtons button, .rightButtons button {
   padding: 10px 20px;
-  margin-right: 10px;
   background-color: #4caf50;
   color: white;
   border: none;
@@ -90,10 +90,54 @@
   background-color: #45a049;
 }
 
-.leftButtons {
-  display: flex;
+.leftButtons button:active, .rightButtons button:active {
+  background-color: #3e8e41;
 }
 
-.rightButtons {
+/* 테스트 결과 각각을 박스로 표시 */
+.testResultBox {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding-left: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.testResultBox h4 {
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.testResultBox p {
   display: flex;
+  align-items: flex-start;
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.resultLabel {
+  flex: 0 0 60px;
+  font-weight: bold;
+  white-space: nowrap;
+  align-self: flex-start; /* 라벨이 맨 위에 위치하도록 설정 */
+}
+
+.resultValue {
+  flex: 1;
+  font-size: 14px;
+  white-space: pre-wrap; /* 줄바꿈을 유지 */
+  overflow-wrap: break-word; /* 긴 텍스트 줄바꿈 */
+  align-self: flex-start; /* 출력값도 같은 라인에 위치하도록 설정 */
+}
+
+.testResultBox .pass {
+  color: blue;
+  font-weight: bold;
+}
+
+.testResultBox .fail {
+  color: red;
+  font-weight: bold;
 }

@@ -7,26 +7,21 @@ import styles from '../styles/ProblemDetail.module.css';
 const ProblemDetail = () => {
   const { problem_id } = useParams();
   const [problemData, setProblemData] = useState(null);
-  const [language, setLanguage] = useState('javascript');
-  const [code, setCode] = useState(''); // 현재 에디터에 표시되는 코드
+  const [language, setLanguage] = useState('PYTHON');
+  const [code, setCode] = useState('');
   const [languageCodes, setLanguageCodes] = useState({
-    javascript: '',
-    cpp: '',
-    python: '',
-  }); // 각 언어별 코드 저장 객체
-  const [output, setOutput] = useState(''); // 실행 결과
+    PYTHON: '',
+    JAVA: '',
+  });
+  const [output, setOutput] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProblemDetails = async () => {
       try {
         const response = await axios.get(`/api/problem/${problem_id}`);
-        console.log(response)
         let description = response.data.description;
-
-        // 이미지 태그의 src 속성 앞에 '/api3' 추가
         description = description.replace(/<img\s+[^>]*src="(\/[^"]*)"/g, '<img src="/baekjoon$1"');
-
         setProblemData({ ...response.data, description });
         setLoading(false);
       } catch (error) {
@@ -39,22 +34,16 @@ const ProblemDetail = () => {
   }, [problem_id]);
 
   if (loading) return <div>Loading...</div>;
-
-  // 문제 데이터가 null인지 확인하고 null이 아니면 렌더링
   if (!problemData) {
     return <div>문제 데이터를 불러오지 못했습니다.</div>;
   }
 
   const handleLanguageChange = (e) => {
     const newLanguage = e.target.value;
-
-    // 현재 코드를 저장
     setLanguageCodes((prevCodes) => ({
       ...prevCodes,
       [language]: code,
     }));
-
-    // 새 언어로 변경하면서 해당 언어의 코드를 에디터에 불러옴
     setCode(languageCodes[newLanguage] || '');
     setLanguage(newLanguage);
   };
@@ -63,9 +52,60 @@ const ProblemDetail = () => {
     setCode(value);
   };
 
-  const handleExecuteCode = () => {
-    const simulatedOutput = `Code executed with output: ${code.length} characters`;
-    setOutput(simulatedOutput);
+  const handleExecuteCode = async () => {
+    setOutput([]);
+    for (const [index, example] of problemData.examples.entries()) {
+      setOutput((prevOutput) => [
+        ...prevOutput,
+        {
+          input: example.input,
+          expectedOutput: example.output,
+          actualOutput: '실행 중...',
+          passed: false,
+        },
+      ]);
+
+      try {
+        const response = await axios.post('/api/execute', {
+          language: language.toUpperCase(),
+          code,
+          input: example.input,
+        });
+
+        const actualOutput = response.data.output.replace(/\r\n/g, '\n').trim();
+        const expectedOutput = example.output.replace(/\r\n/g, '\n').trim();
+        const passed = actualOutput === expectedOutput;
+
+        setOutput((prevOutput) => {
+          const updatedResults = [...prevOutput];
+          updatedResults[index] = {
+            input: example.input,
+            expectedOutput,
+            actualOutput,
+            passed,
+          };
+          return updatedResults;
+        });
+      } catch (error) {
+        console.error('코드 실행 중 오류 발생:', error);
+
+        setOutput((prevOutput) => {
+          const updatedResults = [...prevOutput];
+          updatedResults[index] = {
+            input: example.input,
+            expectedOutput: example.output,
+            actualOutput: '실행 실패',
+            passed: false,
+          };
+          return updatedResults;
+        });
+      }
+    }
+  };
+
+  // 문제 제출 버튼 클릭 시 새로운 탭에서 제출 페이지 열기
+  const handleSubmitProblem = () => {
+    window.open(`https://www.acmicpc.net/submit/${problem_id}`, '_blank');
   };
 
   return (
@@ -85,7 +125,6 @@ const ProblemDetail = () => {
           <pre>{problemData.output}</pre>
         </div>
 
-        {/* 예제 입력과 출력 */}
         {problemData.examples && (
           <div className={styles.examples}>
             <h2>예제</h2>
@@ -114,15 +153,14 @@ const ProblemDetail = () => {
         <div className={styles.languageSelector}>
           <label htmlFor="language">언어 선택: </label>
           <select id="language" value={language} onChange={handleLanguageChange}>
-            <option value="javascript">JavaScript</option>
-            <option value="cpp">C++</option>
-            <option value="python">Python</option>
+            <option value="PYTHON">Python</option>
+            <option value="JAVA">Java</option>
           </select>
         </div>
 
         <MonacoEditor
-          height="70%"  // 에디터 높이 70%
-          language={language}
+          height="70%"
+          language={language.toLowerCase()}
           value={code}
           theme="vs-dark"
           onChange={handleEditorChange}
@@ -136,7 +174,29 @@ const ProblemDetail = () => {
 
         <div className={styles.output}>
           <h3>실행 결과</h3>
-          <pre>{output || '결과가 여기 표시됩니다.'}</pre>
+          {output && output.map((result, index) => (
+            <div key={index} className={styles.testResultBox}>
+              <h4>테스트 {index + 1}</h4>
+              <p>
+                <span className={styles.resultLabel}>입력값 &gt;</span>
+                <span className={styles.resultValue}>{result.input}</span>
+              </p>
+              <p>
+                <span className={styles.resultLabel}>기대값 &gt;</span>
+                <pre className={styles.resultValue}>{result.expectedOutput}</pre>
+              </p>
+              <p>
+                <span className={styles.resultLabel}>출력값 &gt;</span>
+                <pre className={styles.resultValue}>{result.actualOutput}</pre>
+              </p>
+              <p>
+                <span className={styles.resultLabel}>결과 &gt;</span>
+                <span className={result.passed ? styles.pass : styles.fail}>
+                  {result.passed ? '테스트를 통과했습니다.' : '실행한 결과값이 다릅니다.'}
+                </span>
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -148,7 +208,7 @@ const ProblemDetail = () => {
         </div>
         <div className={styles.rightButtons}>
           <button onClick={handleExecuteCode}>코드 실행</button>
-          <button>문제 제출</button>
+          <button onClick={handleSubmitProblem}>문제 제출</button>
         </div>
       </div>
     </div>
