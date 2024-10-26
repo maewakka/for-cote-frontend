@@ -22,7 +22,8 @@ const ProblemDetail = () => {
 
   const userEmail = useSelector((state) => state.user.user?.email);
 
-  const javaDefaultCode = `public class Main {
+  const javaDefaultCode = `import java.util.*;\nimport java.io.*;\n
+public class Main {
     public static void main(String[] args) throws IOException {
         // continue
     }
@@ -87,6 +88,12 @@ const ProblemDetail = () => {
 
   const handleEditorChange = (value) => {
     setCode(value);
+  };
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(code)
+      .then(() => alert('코드가 클립보드에 복사되었습니다.'))
+      .catch((err) => console.error('코드 복사 중 오류 발생:', err));
   };
 
   const handleExecuteCode = async () => {
@@ -213,6 +220,7 @@ const ProblemDetail = () => {
 
       <div className={styles.editorContainer}>
         <div className={styles.languageSelector}>
+          <button onClick={handleCopyCode} className={styles.copyButton}>코드 복사</button>
           <label htmlFor="language">언어 선택: </label>
           <select id="language" value={language} onChange={handleLanguageChange}>
             <option value="PYTHON">Python</option>

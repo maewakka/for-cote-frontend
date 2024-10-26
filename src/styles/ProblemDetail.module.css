@@ -5,7 +5,7 @@
   grid-template-rows: auto 1fr auto;
   gap: 20px;
   padding: 20px;
-  height: calc(100% - 90px); /* 네비바를 제외한 높이 */
+  height: calc(100% - 90px);
 }
 
 .problemDescription {
@@ -16,7 +16,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
-  max-height: calc(100vh - 150px); /* 문제 설명의 최대 높이 */
+  max-height: calc(100vh - 150px);
 }
 
 .inputOutputBox {
@@ -25,13 +25,13 @@
   border-radius: 5px;
   margin-top: 10px;
   white-space: pre-wrap;
-  word-break: break-word; /* 긴 단어가 있으면 자동으로 줄바꿈 */
+  word-break: break-word;
   overflow: hidden;
 }
 
 .inputOutputBox pre {
-  white-space: pre-wrap; /* 공백 및 줄바꿈을 유지하면서 자동 줄바꿈 허용 */
-  overflow-wrap: break-word; /* 텍스트가 박스 너비를 넘지 않도록 줄바꿈 */
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 .editorContainer {
@@ -44,7 +44,25 @@
 
 .languageSelector {
   margin-bottom: 10px;
-  text-align: right; /* 언어 선택 부분을 오른쪽 끝으로 정렬 */
+  display: flex;
+  justify-content: flex-end; /* 우측 정렬 */
+  gap: 10px; /* 버튼과 언어 선택 사이 간격 */
+  align-items: center;
+}
+
+.copyButton {
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.copyButton:hover {
+  background-color: #45a049;
 }
 
 .languageSelector select {
@@ -55,13 +73,13 @@
 }
 
 .editorContainer .output {
-  height: 30%; /* 실행 결과 비율을 30%로 고정 */
+  height: 30%;
   background-color: #f0f0f0;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-top: 5px;
-  overflow-y: auto; /* 실행 결과에서만 스크롤 */
+  overflow-y: auto;
 }
 
 .buttonContainer {
@@ -73,7 +91,7 @@
 
 .leftButtons, .rightButtons {
   display: flex;
-  gap: 10px; /* 버튼 간격을 gap으로 설정 */
+  gap: 10px;
 }
 
 .leftButtons button, .rightButtons button {
@@ -94,7 +112,6 @@
   background-color: #3e8e41;
 }
 
-/* 테스트 결과 각각을 박스로 표시 */
 .testResultBox {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
@@ -121,15 +138,15 @@
   flex: 0 0 60px;
   font-weight: bold;
   white-space: nowrap;
-  align-self: flex-start; /* 라벨이 맨 위에 위치하도록 설정 */
+  align-self: flex-start;
 }
 
 .resultValue {
   flex: 1;
   font-size: 14px;
-  white-space: pre-wrap; /* 줄바꿈을 유지 */
-  overflow-wrap: break-word; /* 긴 텍스트 줄바꿈 */
-  align-self: flex-start; /* 출력값도 같은 라인에 위치하도록 설정 */
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  align-self: flex-start;
 }
 
 .testResultBox .pass {
