@@ -40,6 +40,12 @@ const Navigator = () => {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearchProblem();
+    }
+  };
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.leftSection}>
@@ -54,6 +60,7 @@ const Navigator = () => {
             placeholder="문제 번호"
             value={problemNumber}
             onChange={(e) => setProblemNumber(e.target.value)}
+            onKeyPress={handleKeyPress} // Enter 키 이벤트 추가
             className={styles.problemInput}
           />
           <button onClick={handleSearchProblem} className={styles.searchButton}>
