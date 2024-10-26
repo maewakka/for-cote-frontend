@@ -1,3 +1,5 @@
+// src/components/Navigator.js
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaGithub } from 'react-icons/fa';
@@ -11,7 +13,6 @@ const Navigator = () => {
   const { user } = useSelector((state) => state.user);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // 사용자 정보가 없을 때만 fetchUserDetails 디스패치
   useEffect(() => {
     if (!user) {
       dispatch(fetchUserDetails());
@@ -34,7 +35,7 @@ const Navigator = () => {
   return (
     <nav className={styles.navbar}>
       <div className={styles.leftSection}>
-        <div className={styles.logo}>Your Logo</div>
+        <img src="/logo.jpeg" alt="Logo" className={styles.logo} /> {/* 로고 이미지 추가 */}
         <Link to="/" className={styles.navButton}>단계별 문제</Link>
       </div>
 

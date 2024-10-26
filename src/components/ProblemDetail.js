@@ -42,7 +42,6 @@ const ProblemDetail = () => {
           params: { email: userEmail, problem_id, language: language },
         });
         const savedCode = response.data || '';
-        console.log(response);
         setLanguageCodes((prevCodes) => ({
           ...prevCodes,
           [language]: savedCode,
@@ -56,44 +55,24 @@ const ProblemDetail = () => {
     }
   };
 
-  // 항상 실행되도록 useEffect로 initCode 호출
+  // 새로고침 또는 언어 변경 시 initCode 실행
   useEffect(() => {
     initCode();
-  }, []); // 빈 배열을 사용해 컴포넌트가 처음 렌더링될 때만 실행
+  }, [language, userEmail, problem_id]); // 언어, 사용자 이메일, 문제 ID에 따라 재실행
 
   if (loading) return <div>Loading...</div>;
   if (!problemData) {
     return <div>문제 데이터를 불러오지 못했습니다.</div>;
   }
 
-  const handleLanguageChange = async (e) => {
+  const handleLanguageChange = (e) => {
     const newLanguage = e.target.value;
 
     setLanguageCodes((prevCodes) => ({
       ...prevCodes,
       [language]: code,
     }));
-
     setLanguage(newLanguage);
-
-    if (userEmail) {
-      try {
-        const response = await axios.get('/api/code', {
-          params: { email: userEmail, problem_id, language: newLanguage },
-        });
-        const savedCode = response.data || '';
-        console.log(response);
-        setLanguageCodes((prevCodes) => ({
-          ...prevCodes,
-          [newLanguage]: savedCode,
-        }));
-        setCode(savedCode);
-      } catch (error) {
-        console.error('저장된 코드를 불러오는 중 오류 발생:', error);
-      }
-    } else {
-      setCode(languageCodes[newLanguage] || '');
-    }
   };
 
   const handleEditorChange = (value) => {
@@ -269,8 +248,6 @@ const ProblemDetail = () => {
       <div className={styles.buttonContainer}>
         <div className={styles.leftButtons}>
           <button>테스트 케이스 추가</button>
-          {/* <button>문제 질문</button>
-          <button>코드 최적화</button> */}
         </div>
         <div className={styles.rightButtons}>
           {userEmail && <button onClick={handleSaveCode}>코드 저장</button>}
