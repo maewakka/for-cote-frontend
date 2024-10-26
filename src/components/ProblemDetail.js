@@ -22,6 +22,12 @@ const ProblemDetail = () => {
 
   const userEmail = useSelector((state) => state.user.user?.email);
 
+  const javaDefaultCode = `public class Main {
+    public static void main(String[] args) throws IOException {
+        // continue
+    }
+}`;
+
   useEffect(() => {
     const fetchProblemDetails = async () => {
       try {
@@ -51,12 +57,12 @@ const ProblemDetail = () => {
           ...prevCodes,
           [language]: savedCode,
         }));
-        setCode(savedCode);
+        setCode(savedCode || (language === 'JAVA' ? javaDefaultCode : ''));
       } catch (error) {
         console.error('저장된 코드를 불러오는 중 오류 발생:', error);
       }
     } else {
-      setCode(languageCodes[language] || '');
+      setCode(languageCodes[language] || (language === 'JAVA' ? javaDefaultCode : ''));
     }
   };
 
