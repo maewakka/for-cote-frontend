@@ -1,17 +1,19 @@
 // src/components/Navigator.js
 
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaGithub } from 'react-icons/fa';
-import { FiMoreHorizontal } from 'react-icons/fi';
+import { FiMoreHorizontal, FiSearch } from 'react-icons/fi'; // 돋보기 아이콘 추가
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUserDetails, logout } from '../store/userSlice';
 import styles from '../styles/Navigator.module.css';
 
 const Navigator = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [problemNumber, setProblemNumber] = useState(''); // 문제 번호 상태 관리
 
   useEffect(() => {
     if (!user) {
@@ -32,6 +34,12 @@ const Navigator = () => {
     setShowDropdown(!showDropdown);
   };
 
+  const handleSearchProblem = () => {
+    if (problemNumber.trim()) {
+      navigate(`/problem/${problemNumber}`);
+    }
+  };
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.leftSection}>
@@ -40,6 +48,19 @@ const Navigator = () => {
       </div>
 
       <div className={styles.rightSection}>
+        <div className={styles.problemSearch}>
+          <input
+            type="text"
+            placeholder="문제 번호"
+            value={problemNumber}
+            onChange={(e) => setProblemNumber(e.target.value)}
+            className={styles.problemInput}
+          />
+          <button onClick={handleSearchProblem} className={styles.searchButton}>
+            <FiSearch />
+          </button>
+        </div>
+
         {user ? (
           <>
             {user.profile_img_url && (

@@ -39,6 +39,34 @@
   align-items: center;
 }
 
+.problemSearch {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.problemInput {
+  width: 100px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 5px;
+}
+
+.searchButton {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.searchButton:hover {
+  background-color: #45a049;
+}
+
 .githubButton {
   background-color: #444;
   color: white;
