@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import MonacoEditor from '@monaco-editor/react';
 import { useSelector } from 'react-redux';
+import TestCaseModal from './TestCaseModal'; // 모달 컴포넌트 추가
 import styles from '../styles/ProblemDetail.module.css';
 
 const ProblemDetail = () => {
@@ -14,8 +15,10 @@ const ProblemDetail = () => {
     PYTHON: '',
     JAVA: '',
   });
-  const [output, setOutput] = useState([]);
+  const [outputs, setOutputs] = useState([]); // 실행 출력 관리
+  const [results, setResults] = useState([]); // 실행 결과 관리
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false); // 모달 상태 관리
 
   const userEmail = useSelector((state) => state.user.user?.email);
 
@@ -26,6 +29,8 @@ const ProblemDetail = () => {
         let description = response.data.description;
         description = description.replace(/<img\s+[^>]*src="(\/[^"]*)"/g, '<img src="/baekjoon$1"');
         setProblemData({ ...response.data, description });
+        setOutputs(Array(response.data.examples.length).fill(''));
+        setResults(Array(response.data.examples.length).fill(null));
         setLoading(false);
       } catch (error) {
         console.error('문제 데이터를 불러오는 중 오류 발생:', error);
@@ -55,10 +60,9 @@ const ProblemDetail = () => {
     }
   };
 
-  // 새로고침 또는 언어 변경 시 initCode 실행
   useEffect(() => {
     initCode();
-  }, [language, userEmail, problem_id]); // 언어, 사용자 이메일, 문제 ID에 따라 재실행
+  }, [language, userEmail, problem_id]);
 
   if (loading) return <div>Loading...</div>;
   if (!problemData) {
@@ -80,18 +84,10 @@ const ProblemDetail = () => {
   };
 
   const handleExecuteCode = async () => {
-    setOutput([]);
-    for (const [index, example] of problemData.examples.entries()) {
-      setOutput((prevOutput) => [
-        ...prevOutput,
-        {
-          input: example.input,
-          expectedOutput: example.output,
-          actualOutput: '실행 중...',
-          passed: false,
-        },
-      ]);
+    setOutputs(Array(problemData.examples.length).fill('실행 중...'));
+    setResults(Array(problemData.examples.length).fill(null));
 
+    for (const [index, example] of problemData.examples.entries()) {
       try {
         const response = await axios.post('/api/execute', {
           language: language.toUpperCase(),
@@ -105,27 +101,29 @@ const ProblemDetail = () => {
         const expectedOutput = example.output.replace(/\r\n/g, '\n').trim();
         const passed = actualOutput === expectedOutput;
 
-        setOutput((prevOutput) => {
-          const updatedResults = [...prevOutput];
-          updatedResults[index] = {
-            input: example.input,
-            expectedOutput,
-            actualOutput,
-            passed,
-          };
+        setOutputs((prevOutputs) => {
+          const updatedOutputs = [...prevOutputs];
+          updatedOutputs[index] = actualOutput;
+          return updatedOutputs;
+        });
+
+        setResults((prevResults) => {
+          const updatedResults = [...prevResults];
+          updatedResults[index] = passed;
           return updatedResults;
         });
       } catch (error) {
         console.error('코드 실행 중 오류 발생:', error);
 
-        setOutput((prevOutput) => {
-          const updatedResults = [...prevOutput];
-          updatedResults[index] = {
-            input: example.input,
-            expectedOutput: example.output,
-            actualOutput: '실행 실패',
-            passed: false,
-          };
+        setOutputs((prevOutputs) => {
+          const updatedOutputs = [...prevOutputs];
+          updatedOutputs[index] = '실행 실패';
+          return updatedOutputs;
+        });
+
+        setResults((prevResults) => {
+          const updatedResults = [...prevResults];
+          updatedResults[index] = false;
           return updatedResults;
         });
       }
@@ -151,6 +149,19 @@ const ProblemDetail = () => {
 
   const handleSubmitProblem = () => {
     window.open(`https://www.acmicpc.net/submit/${problem_id}`, '_blank');
+  };
+
+  // 새로운 테스트 케이스 추가
+  const addTestCase = (input, output) => {
+    const newExample = { input, output };
+    setProblemData((prevData) => ({
+      ...prevData,
+      examples: [...prevData.examples, newExample],
+    }));
+
+    // outputs와 results 배열에도 새 테스트 케이스를 추가
+    setOutputs((prevOutputs) => [...prevOutputs, '']);
+    setResults((prevResults) => [...prevResults, null]);
   };
 
   return (
@@ -219,25 +230,25 @@ const ProblemDetail = () => {
 
         <div className={styles.output}>
           <h3>실행 결과</h3>
-          {output && output.map((result, index) => (
+          {problemData.examples && problemData.examples.map((example, index) => (
             <div key={index} className={styles.testResultBox}>
               <h4>테스트 {index + 1}</h4>
               <p>
                 <span className={styles.resultLabel}>입력값 &gt;</span>
-                <span className={styles.resultValue}>{result.input}</span>
+                <span className={styles.resultValue}>{example.input}</span>
               </p>
               <p>
                 <span className={styles.resultLabel}>기대값 &gt;</span>
-                <pre className={styles.resultValue}>{result.expectedOutput}</pre>
+                <pre className={styles.resultValue}>{example.output}</pre>
               </p>
               <p>
                 <span className={styles.resultLabel}>출력값 &gt;</span>
-                <pre className={styles.resultValue}>{result.actualOutput}</pre>
+                <pre className={styles.resultValue}>{outputs[index]}</pre>
               </p>
               <p>
                 <span className={styles.resultLabel}>결과 &gt;</span>
-                <span className={result.passed ? styles.pass : styles.fail}>
-                  {result.passed ? '테스트를 통과했습니다.' : '실행한 결과값이 다릅니다.'}
+                <span className={results[index] === null ? '' : results[index] ? styles.pass : styles.fail}>
+                  {results[index] === null ? '' : results[index] ? '테스트를 통과했습니다.' : '실행한 결과값이 다릅니다.'}
                 </span>
               </p>
             </div>
@@ -247,7 +258,7 @@ const ProblemDetail = () => {
 
       <div className={styles.buttonContainer}>
         <div className={styles.leftButtons}>
-          <button>테스트 케이스 추가</button>
+          <button onClick={() => setShowModal(true)}>테스트 케이스 추가</button>
         </div>
         <div className={styles.rightButtons}>
           {userEmail && <button onClick={handleSaveCode}>코드 저장</button>}
@@ -255,6 +266,14 @@ const ProblemDetail = () => {
           <button onClick={handleSubmitProblem}>문제 제출</button>
         </div>
       </div>
+
+      {/* 모달 컴포넌트 */}
+      {showModal && (
+        <TestCaseModal
+          onClose={() => setShowModal(false)}
+          onAdd={addTestCase}
+        />
+      )}
     </div>
   );
 };
