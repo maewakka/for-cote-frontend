@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import MonacoEditor from '@monaco-editor/react';
+import { MathJax, MathJaxContext } from 'better-react-mathjax'; // MathJax import 추가
 import { useSelector } from 'react-redux';
 import TestCaseModal from './TestCaseModal'; // 모달 컴포넌트 추가
 import styles from '../styles/ProblemDetail.module.css';
@@ -33,9 +34,17 @@ public class Main {
     const fetchProblemDetails = async () => {
       try {
         const response = await axios.get(`/api/problem/${problem_id}`);
+        console.log(response.data)
         let description = response.data.description;
+        let input = response.data.input;
+        let output = response.data.output;
+        
         description = description.replace(/<img\s+[^>]*src="(\/[^"]*)"/g, '<img src="/baekjoon$1"');
-        setProblemData({ ...response.data, description });
+        description = description.replace(/\$(.*?)\$/g, '\\($1\\)');
+        input = input.replace(/\$(.*?)\$/g, '\\($1\\)');
+        output = output.replace(/\$(.*?)\$/g, '\\($1\\)');
+
+        setProblemData({ ...response.data, description, input, output});
         setOutputs(Array(response.data.examples.length).fill(''));
         setResults(Array(response.data.examples.length).fill(null));
         setLoading(false);
@@ -111,7 +120,7 @@ public class Main {
         });
 
         const actualOutput = response.data.output.replace(/\r\n/g, '\n').trim();
-        const expectedOutput = example.output.replace(/\r\n/g, '\n').trim();
+        const expectedOutput = example.output.replace(/\r\n/g, '\n').trim(); 
         const passed = actualOutput === expectedOutput;
 
         setOutputs((prevOutputs) => {
@@ -178,22 +187,33 @@ public class Main {
   };
 
   return (
-    <div className={styles.problemContainer}>
+    <MathJaxContext>
+      <div className={styles.problemContainer}>
       <div className={styles.problemDescription}>
         <h1>{problemData?.title || '제목 없음'}</h1>
+        <MathJax>
         <div
           className={styles.description}
           dangerouslySetInnerHTML={{ __html: problemData.description }}
         ></div>
-        <h2>입력</h2>
-        <div className={styles.inputOutputBox}>
-          <pre>{problemData.input}</pre>
-        </div>
-        <h2>출력</h2>
-        <div className={styles.inputOutputBox}>
-          <pre>{problemData.output}</pre>
-        </div>
+      </MathJax>
 
+      <h2>입력</h2>
+      <MathJax>
+        <div
+          className={styles.inputOutputBox}
+          dangerouslySetInnerHTML={{ __html: problemData.input }}
+        ></div>
+      </MathJax>
+
+      <h2>출력</h2>
+      <MathJax>
+        <div
+          className={styles.inputOutputBox}
+          dangerouslySetInnerHTML={{ __html: problemData.output }}
+        ></div>
+      </MathJax>
+        
         {problemData.examples && (
           <div className={styles.examples}>
             <h2>예제</h2>
@@ -289,6 +309,7 @@ public class Main {
         />
       )}
     </div>
+    </MathJaxContext>
   );
 };
 
