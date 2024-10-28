@@ -187,7 +187,7 @@ public class Main {
   };
 
   return (
-    <MathJaxContext>
+    <MathJaxContext config={{ options: { processSectionDelay: 0, renderSectionDelay: 0 } }}>
       <div className={styles.problemContainer}>
       <div className={styles.problemDescription}>
         <h1>{problemData?.title || '제목 없음'}</h1>
