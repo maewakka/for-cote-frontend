@@ -68,7 +68,7 @@ const Navigator = () => {
           </button>
         </div>
 
-        {user != null ? (
+        {user != null || user == '' ? (
           <>
             {user.profile_img_url && (
               <img
