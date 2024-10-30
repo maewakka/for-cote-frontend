@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaGithub } from 'react-icons/fa';
-import { FiMoreHorizontal, FiSearch } from 'react-icons/fi'; // 돋보기 아이콘 추가
+import { FiMoreHorizontal, FiSearch } from 'react-icons/fi';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUserDetails, logout } from '../store/userSlice';
 import styles from '../styles/Navigator.module.css';
@@ -13,7 +13,7 @@ const Navigator = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [problemNumber, setProblemNumber] = useState(''); // 문제 번호 상태 관리
+  const [problemNumber, setProblemNumber] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -49,7 +49,7 @@ const Navigator = () => {
   return (
     <nav className={styles.navbar}>
       <div className={styles.leftSection}>
-        <img src="/logo.jpeg" alt="Logo" className={styles.logo} /> {/* 로고 이미지 추가 */}
+        <img src="/logo.jpeg" alt="Logo" className={styles.logo} />
         <Link to="/" className={styles.navButton}>단계별 문제</Link>
       </div>
 
@@ -60,7 +60,7 @@ const Navigator = () => {
             placeholder="문제 번호"
             value={problemNumber}
             onChange={(e) => setProblemNumber(e.target.value)}
-            onKeyPress={handleKeyPress} // Enter 키 이벤트 추가
+            onKeyPress={handleKeyPress}
             className={styles.problemInput}
           />
           <button onClick={handleSearchProblem} className={styles.searchButton}>
