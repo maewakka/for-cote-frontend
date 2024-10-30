@@ -5,6 +5,7 @@ import axios from 'axios';
 
 export const fetchUserDetails = createAsyncThunk('user/fetchUserDetails', async () => {
   const response = await axios.get('/api/user-detail');
+  console.log(response.data)
   return response.data;
 });
 
