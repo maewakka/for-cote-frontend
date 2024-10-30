@@ -68,7 +68,14 @@ const Navigator = () => {
           </button>
         </div>
 
-        {user != null || user == '' ? (
+        {!user ? 
+          (
+            <button className={styles.githubButton} onClick={handleGitHubLogin}>
+              <FaGithub className={styles.githubIcon} />
+              GitHub Login
+            </button>
+          ):
+        (
           <>
             {user.profile_img_url && (
               <img
@@ -93,11 +100,6 @@ const Navigator = () => {
               )}
             </div>
           </>
-        ) : (
-          <button className={styles.githubButton} onClick={handleGitHubLogin}>
-            <FaGithub className={styles.githubIcon} />
-            GitHub Login
-          </button>
         )}
       </div>
     </nav>
