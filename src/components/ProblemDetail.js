@@ -26,6 +26,7 @@ const ProblemDetail = () => {
 
   const dispatch = useDispatch();
   const userEmail = useSelector((state) => state.user.user?.email);
+  const id = useSelector((state) => state.user.user?.id);
   const [todayAssistCount, setTodayAssistCount] = useState(0);
 
   const javaDefaultCode = `import java.util.*;\nimport java.io.*;\n
@@ -66,10 +67,10 @@ public class Main {
   }, [problem_id]);
 
   const initCode = async () => {
-    if (userEmail) {
+    if (id) {
       try {
         const response = await axios.get('/api/code', {
-          params: { email: userEmail, problem_id, language: language },
+          params: { id: id, problem_id, language: language },
         });
         const savedCode = response.data || '';
         setLanguageCodes((prevCodes) => ({
@@ -148,7 +149,7 @@ public class Main {
           code,
           input: example.input,
           problem_id,
-          email: userEmail || null,
+          id: id || null,
         });
 
         const actualOutput = response.data.output.replace(/\r\n/g, '\n').trim();
@@ -191,7 +192,7 @@ public class Main {
         code,
         input: null,
         problem_id,
-        email: userEmail,
+        id: id,
       });
 
       alert('코드가 저장되었습니다.');
