@@ -85,7 +85,7 @@ const Navigator = () => {
               />
             )}
             <div className={styles.welcomeMessage}>
-              {user.name != null ? user.name : user.email} 님, 반갑습니다!
+              {!user.name || user.name.trim() === "" ? user.email : user.name} 님, 반갑습니다!
             </div>
             <div className={styles.moreButtonContainer}>
               <button className={styles.moreButton} onClick={toggleDropdown}>
