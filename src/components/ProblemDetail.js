@@ -252,10 +252,9 @@ public class Main {
             
           {problemData.examples && (
             <div className={styles.examples}>
-              <h2>예제</h2>
               {problemData.examples.map((example, index) => (
                 <div key={index} className={styles.example}>
-                  <h3>예제 {index + 1}</h3>
+                  <h2>예제 {index + 1}</h2>
                   <div className={styles.exampleItem}>
                     <strong>입력:</strong>
                     <div className={styles.inputOutputBox}>
